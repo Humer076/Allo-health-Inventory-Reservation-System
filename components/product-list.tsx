@@ -193,10 +193,10 @@ export function ProductList() {
             <CardHeader className="sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <CardTitle>{product.name}</CardTitle>
-                <p className="mt-1 text-sm text-ink/60">{product.sku}</p>
+                <p className="mt-1 text-sm font-medium text-slate-500">{product.sku}</p>
                 <CardDescription className="mt-3 max-w-2xl">{product.description}</CardDescription>
               </div>
-              <p className="text-lg font-semibold">INR {(product.priceCents / 100).toFixed(2)}</p>
+              <p className="text-lg font-semibold text-slate-950">INR {(product.priceCents / 100).toFixed(2)}</p>
             </CardHeader>
 
             <CardContent>
@@ -218,8 +218,8 @@ export function ProductList() {
                     return (
                       <TableRow key={warehouse.warehouseId}>
                         <TableCell>
-                          <span className="font-medium">{warehouse.warehouseName}</span>
-                          <span className="ml-2 text-ink/50">{warehouse.warehouseCode}</span>
+                          <span className="font-medium text-slate-900">{warehouse.warehouseName}</span>
+                          <span className="ml-2 text-slate-400">{warehouse.warehouseCode}</span>
                         </TableCell>
                         <TableCell className="text-base font-semibold">{warehouse.totalStock}</TableCell>
                         <TableCell className="text-base font-semibold">{warehouse.reservedStock}</TableCell>
@@ -282,10 +282,10 @@ function InventoryMetrics({
   return (
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {metrics.map((metric) => (
-        <Card key={metric.label}>
+        <Card key={metric.label} className="bg-gradient-to-br from-white to-slate-50">
           <CardContent className="p-4">
-            <p className="text-sm text-ink/60">{metric.label}</p>
-            <p className="mt-2 text-2xl font-semibold">{metric.value}</p>
+            <p className="text-sm font-medium text-slate-500">{metric.label}</p>
+            <p className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">{metric.value}</p>
           </CardContent>
         </Card>
       ))}
