@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Allo Inventory Reservations
 
 Next.js App Router take-home project for reserving inventory during checkout.
@@ -77,3 +78,7 @@ for production deployments and can be called every minute by Vercel Cron.
   unique key per method and path, then persist the original response for retries.
 - The UI is intentionally simple so the reservation and concurrency logic stays easy to
   review.
+=======
+# Allo-health-Inventory-Reservation-System
+A production-style inventory reservation system built with Next.js, Prisma, PostgreSQL, and Neon. Supports real-time stock reservations, concurrency-safe inventory handling, reservation lifecycle management, and warehouse-based inventory tracking.
+>>>>>>> 53043bb51fb4512d9fae22c934905ce7c515c3f0
