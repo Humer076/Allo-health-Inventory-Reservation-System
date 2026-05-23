@@ -1,84 +1,239 @@
-<<<<<<< HEAD
-# Allo Inventory Reservations
+# StockFlow — Inventory Reservation System
 
-Next.js App Router take-home project for reserving inventory during checkout.
+A production-style inventory reservation system built with Next.js, Prisma, PostgreSQL, and Neon.
 
-## Stack
+The system supports:
+- real-time inventory reservations
+- warehouse-based stock tracking
+- reservation lifecycle management
+- concurrency-safe inventory updates
+- automatic expired reservation release
 
-- Next.js
+---
+
+## Live Demo
+
+https://allo-health-inventory-reservation-s.vercel.app/
+
+---
+
+## Tech Stack
+
+### Frontend
+- Next.js 14
+- React
 - TypeScript
-- Prisma
-- PostgreSQL
 - Tailwind CSS
+- shadcn/ui
 
-## Local Setup
+### Backend
+- Next.js API Routes
+- Prisma ORM
+- PostgreSQL
+- Neon Database
 
-1. Install dependencies:
+### Deployment
+- Vercel
 
-```bash
-npm install
-```
+---
 
-2. Copy environment variables:
+## Architecture
 
-```bash
-cp .env.example .env
-```
+The application follows a layered full-stack architecture using Next.js App Router.
 
-3. Set `DATABASE_URL` to a hosted PostgreSQL database.
+### Frontend Layer
+- Built using Next.js and React
+- UI components built with Tailwind CSS and shadcn/ui
+- Dashboard displays:
+  - inventory metrics
+  - warehouse stock
+  - reservation history
+  - reservation status lifecycle
 
-4. Run migrations and seed data:
+### API Layer
+Implemented using Next.js API Routes.
 
-```bash
-npm run prisma:migrate
-npm run prisma:seed
-```
+Main APIs:
+- `/api/products`
+- `/api/reservations`
+- `/api/reservations/[id]`
+- `/api/reservations/[id]/confirm`
+- `/api/reservations/[id]/release`
+- `/api/cron/release-expired-reservations`
 
-5. Start the app:
+The API layer handles:
+- inventory validation
+- reservation lifecycle
+- concurrency-safe updates
+- stock calculations
 
-```bash
-npm run dev
-```
+### Database Layer
+PostgreSQL database hosted on Neon.
 
-## API
+Managed using Prisma ORM.
 
-- `GET /api/products` lists products with available stock per warehouse.
-- `GET /api/warehouses` lists warehouses.
-- `POST /api/reservations` reserves stock for checkout.
-- `GET /api/reservations/:id` supports the reservation detail page.
-- `POST /api/reservations/:id/confirm` confirms a successful payment.
-- `POST /api/reservations/:id/release` releases a pending reservation.
-- `POST /api/cron/release-expired-reservations` releases expired pending reservations.
+Main entities:
+- Product
+- Warehouse
+- Inventory
+- Reservation
 
-## Concurrency Approach
+### Concurrency Handling
+Reservations use atomic conditional inventory updates to prevent overselling during simultaneous requests.
 
-The reservation endpoint uses a single conditional PostgreSQL update inside a Prisma
-transaction:
+Inventory is updated safely using transactional reservation logic.
 
-```sql
-UPDATE "Inventory"
-SET "reservedStock" = "reservedStock" + quantity
-WHERE "productId" = productId
-  AND "warehouseId" = warehouseId
-  AND "totalStock" - "reservedStock" >= quantity
-```
+### Reservation Lifecycle
 
-If the update affects zero rows, the API returns `409`. This avoids a read-check-write
-race and lets PostgreSQL decide which concurrent request wins the last available unit.
+PENDING → CONFIRMED  
+PENDING → RELEASED  
+PENDING → EXPIRED
 
-## Expiry Approach
+Expired reservations are automatically released back into available inventory.
 
-Pending reservations have an `expiresAt` timestamp. Expired reservations are released by
-lazy cleanup before inventory reads and reservation writes. A cron endpoint is also included
-for production deployments and can be called every minute by Vercel Cron.
+### Deployment Architecture
+- Frontend + Backend deployed on Vercel
+- PostgreSQL hosted on Neon
+- Environment variables managed securely using Vercel project settings
 
-## Trade-Offs
+---
 
-- Idempotency is not implemented yet. I would add a small `IdempotencyKey` table with a
-  unique key per method and path, then persist the original response for retries.
-- The UI is intentionally simple so the reservation and concurrency logic stays easy to
-  review.
-=======
-# Allo-health-Inventory-Reservation-System
-A production-style inventory reservation system built with Next.js, Prisma, PostgreSQL, and Neon. Supports real-time stock reservations, concurrency-safe inventory handling, reservation lifecycle management, and warehouse-based inventory tracking.
->>>>>>> 53043bb51fb4512d9fae22c934905ce7c515c3f0
+## Features
+
+### Inventory Dashboard
+- Product listing
+- Warehouse inventory tracking
+- Available stock calculation
+- Low stock indicators
+- Reservation metrics dashboard
+
+### Reservation Lifecycle
+- Create reservation
+- Confirm reservation
+- Release reservation
+- Expire reservation automatically
+
+### Reservation History
+- Recent reservation tracking
+- Status badges
+- Created/expiry timestamps
+- Reservation detail page
+
+### Concurrency Safety
+The reservation system prevents race conditions using atomic database updates.
+
+Inventory reservations are handled using conditional updates to ensure stock cannot be oversold during simultaneous requests.
+
+---
+
+## Inventory Logic
+
+The inventory system follows this logic:
+
+### Total Inventory
+Represents total physical stock available in warehouse.
+
+### Reserved Inventory
+Represents units currently held by active reservations.
+
+### Available Inventory
+
+available = total - reserved
+
+Example:
+
+- Total = 30
+- Reserved = 4
+- Available = 26
+
+Total inventory never changes during reservation holds.
+
+---
+
+## Reservation Statuses
+
+### PENDING
+Reservation created and inventory held temporarily.
+
+### CONFIRMED
+Reservation confirmed successfully.
+
+### RELEASED
+Reservation manually released back into inventory.
+
+### EXPIRED
+Reservation expired automatically after timeout.
+
+---
+
+## API Routes
+
+### Products
+
+GET `/api/products`
+
+Returns:
+- products
+- warehouse inventory
+- reservation metrics
+
+---
+
+### Create Reservation
+
+POST `/api/reservations`
+
+Creates a temporary inventory hold.
+
+---
+
+### Get Reservation
+
+GET `/api/reservations/[id]`
+
+Returns reservation details.
+
+---
+
+### Confirm Reservation
+
+POST `/api/reservations/[id]/confirm`
+
+Marks reservation as confirmed.
+
+---
+
+### Release Reservation
+
+POST `/api/reservations/[id]/release`
+
+Releases held inventory.
+
+---
+
+### Expiry Cleanup
+
+GET `/api/cron/release-expired-reservations`
+
+Automatically releases expired reservations.
+
+Protected using:
+
+CRON_SECRET
+
+---
+
+## Database Schema
+
+Main models:
+- Product
+- Warehouse
+- Inventory
+- Reservation
+
+### Inventory Constraints
+
+Inventory uses:
+
+```prisma
+@@unique([productId, warehouseId])
