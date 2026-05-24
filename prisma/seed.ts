@@ -17,28 +17,28 @@ async function main() {
     })
   ]);
 
-  const [tee, bottle, sneakers] = await Promise.all([
+  const [pulseOximeter, glucoseStrips, faceMasks] = await Promise.all([
     prisma.product.create({
       data: {
-        sku: "TSHIRT-BLK-M",
-        name: "Black Cotton T-Shirt",
-        description: "Midweight everyday cotton t-shirt in black.",
+        sku: "PULSE-OXIMETER-FP",
+        name: "Fingertip Pulse Oximeter",
+        description: "Compact SpO2 and pulse rate monitor for clinical checks.",
         priceCents: 129900
       }
     }),
     prisma.product.create({
       data: {
-        sku: "BOTTLE-STEEL-750",
-        name: "750ml Steel Bottle",
-        description: "Insulated stainless steel bottle for daily use.",
+        sku: "GLUCOSE-STRIPS-50",
+        name: "Blood Glucose Test Strips",
+        description: "Pack of 50 strips for compatible glucose monitoring devices.",
         priceCents: 79900
       }
     }),
     prisma.product.create({
       data: {
-        sku: "SNEAKER-WHT-9",
-        name: "White Low-Top Sneakers",
-        description: "Minimal low-top sneakers with a rubber sole.",
+        sku: "MASK-SURGICAL-100",
+        name: "Surgical Face Masks",
+        description: "Box of 100 disposable 3-ply masks for care teams.",
         priceCents: 349900
       }
     })
@@ -46,12 +46,12 @@ async function main() {
 
   await prisma.inventory.createMany({
     data: [
-      { productId: tee.id, warehouseId: mumbai.id, totalStock: 42, reservedStock: 0 },
-      { productId: tee.id, warehouseId: delhi.id, totalStock: 28, reservedStock: 3 },
-      { productId: bottle.id, warehouseId: mumbai.id, totalStock: 16, reservedStock: 1 },
-      { productId: bottle.id, warehouseId: delhi.id, totalStock: 31, reservedStock: 0 },
-      { productId: sneakers.id, warehouseId: mumbai.id, totalStock: 7, reservedStock: 2 },
-      { productId: sneakers.id, warehouseId: delhi.id, totalStock: 12, reservedStock: 0 }
+      { productId: pulseOximeter.id, warehouseId: mumbai.id, totalStock: 42, reservedStock: 0 },
+      { productId: pulseOximeter.id, warehouseId: delhi.id, totalStock: 28, reservedStock: 3 },
+      { productId: glucoseStrips.id, warehouseId: mumbai.id, totalStock: 16, reservedStock: 1 },
+      { productId: glucoseStrips.id, warehouseId: delhi.id, totalStock: 31, reservedStock: 0 },
+      { productId: faceMasks.id, warehouseId: mumbai.id, totalStock: 7, reservedStock: 2 },
+      { productId: faceMasks.id, warehouseId: delhi.id, totalStock: 12, reservedStock: 0 }
     ]
   });
 }
