@@ -1,4 +1,4 @@
-# StockFlow — Inventory Reservation System
+# Allo Health — Inventory Reservation System
 
 A production-style inventory reservation system built with Next.js, Prisma, PostgreSQL, and Neon.
 
