@@ -13,7 +13,7 @@ The system supports:
 
 ## Live Demo
 
-https://allo-health-inventory-reservation-s.vercel.app/
+https://allo-health-inventory-reservation-s.vercel.app?_vercel_share=p7E5pY8sNIWCvtbpapaAtI1IRJIndwk1
 
 ---
 
