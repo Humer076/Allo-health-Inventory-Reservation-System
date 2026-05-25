@@ -57,11 +57,11 @@ export function ReservationHistory() {
   }, []);
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="overflow-hidden border-teal-100 bg-white/95">
+      <CardHeader className="border-b border-slate-100 bg-white">
         <CardTitle>Recent Reservations</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-5">
         {error ? (
           <Alert className="mb-4" variant="destructive">
             <AlertTitle>Unable to load history</AlertTitle>

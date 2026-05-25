@@ -6,14 +6,6 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from "@/components/ui/table";
 import { useToast } from "@/components/ui/toast";
 
 type ProductResponse = {
@@ -168,7 +160,7 @@ export function ProductList() {
 
   if (loading) {
     return (
-      <Card>
+      <Card className="border-teal-100 bg-white/90">
         <CardContent className="pt-5">
           <p className="text-sm text-ink/70">Loading inventory...</p>
         </CardContent>
@@ -187,66 +179,84 @@ export function ProductList() {
         </Alert>
       ) : null}
 
-      <div className="grid gap-4">
+      <div className="grid gap-5 xl:grid-cols-2">
         {products.map((product) => (
-          <Card key={product.id}>
-            <CardHeader className="sm:flex-row sm:items-start sm:justify-between">
-              <div>
+          <Card key={product.id} className="overflow-hidden border-teal-100 bg-white/95">
+            <CardHeader className="border-b border-slate-100 bg-white sm:flex-row sm:items-start sm:justify-between sm:gap-6">
+              <div className="min-w-0">
                 <CardTitle>{product.name}</CardTitle>
                 <p className="mt-1 text-sm font-medium text-slate-500">{product.sku}</p>
                 <CardDescription className="mt-3 max-w-2xl">{product.description}</CardDescription>
               </div>
-              <p className="text-lg font-semibold text-slate-950">INR {(product.priceCents / 100).toFixed(2)}</p>
+              <p className="shrink-0 text-lg font-semibold text-slate-950">
+                INR {(product.priceCents / 100).toFixed(2)}
+              </p>
             </CardHeader>
 
-            <CardContent>
-              <Table className="min-w-[640px]">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Warehouse</TableHead>
-                    <TableHead>Total</TableHead>
-                    <TableHead>Reserved</TableHead>
-                    <TableHead>Available</TableHead>
-                    <TableHead className="text-right">Action</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {product.warehouses.map((warehouse) => {
-                    const key = `${product.id}:${warehouse.warehouseId}`;
-                    const stockStatus = getStockStatus(warehouse.availableStock);
+            <CardContent className="pt-5">
+              <div className="grid gap-3">
+                {product.warehouses.map((warehouse) => {
+                  const key = `${product.id}:${warehouse.warehouseId}`;
+                  const stockStatus = getStockStatus(warehouse.availableStock);
 
-                    return (
-                      <TableRow key={warehouse.warehouseId}>
-                        <TableCell>
-                          <span className="font-medium text-slate-900">{warehouse.warehouseName}</span>
-                          <span className="ml-2 text-slate-400">{warehouse.warehouseCode}</span>
-                        </TableCell>
-                        <TableCell className="text-base font-semibold">{warehouse.totalStock}</TableCell>
-                        <TableCell className="text-base font-semibold">{warehouse.reservedStock}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-3">
-                            <span className="text-base font-semibold">{warehouse.availableStock}</span>
-                            <Badge variant={stockStatus.variant}>{stockStatus.label}</Badge>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Button
-                            size="sm"
-                            disabled={warehouse.availableStock < 1 || pendingKey === key}
-                            onClick={() => reserve(product.id, warehouse.warehouseId)}
-                          >
-                            {pendingKey === key
-                              ? "Reserving..."
-                              : warehouse.availableStock < 1
-                                ? "Out of Stock"
-                                : "Reserve"}
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
+                  return (
+                    <div
+                      className="rounded-lg border border-slate-200 bg-slate-50/70 p-4"
+                      key={warehouse.warehouseId}
+                    >
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                        <div>
+                          <p className="font-semibold text-slate-950">{warehouse.warehouseName}</p>
+                          <p className="mt-1 text-xs font-medium text-slate-400">
+                            {warehouse.warehouseCode}
+                          </p>
+                        </div>
+                        <Badge variant={stockStatus.variant}>{stockStatus.label}</Badge>
+                      </div>
+
+                      <div className="mt-4 grid grid-cols-3 gap-3 text-sm">
+                        <div>
+                          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                            Total
+                          </p>
+                          <p className="mt-1 text-base font-semibold text-slate-950">
+                            {warehouse.totalStock}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                            Reserved
+                          </p>
+                          <p className="mt-1 text-base font-semibold text-slate-950">
+                            {warehouse.reservedStock}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                            Available
+                          </p>
+                          <p className="mt-1 text-base font-semibold text-slate-950">
+                            {warehouse.availableStock}
+                          </p>
+                        </div>
+                      </div>
+
+                      <Button
+                        className="mt-4 w-full"
+                        size="sm"
+                        disabled={warehouse.availableStock < 1 || pendingKey === key}
+                        onClick={() => reserve(product.id, warehouse.warehouseId)}
+                      >
+                        {pendingKey === key
+                          ? "Reserving..."
+                          : warehouse.availableStock < 1
+                            ? "Out of Stock"
+                            : "Reserve"}
+                      </Button>
+                    </div>
+                  );
+                })}
+              </div>
             </CardContent>
           </Card>
         ))}
@@ -280,12 +290,17 @@ function InventoryMetrics({
   ];
 
   return (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {metrics.map((metric) => (
-        <Card key={metric.label} className="bg-gradient-to-br from-white to-slate-50">
+        <Card
+          key={metric.label}
+          className="border-teal-100 bg-gradient-to-br from-white to-teal-50/50"
+        >
           <CardContent className="p-4">
             <p className="text-sm font-medium text-slate-500">{metric.label}</p>
-            <p className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">{metric.value}</p>
+            <p className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
+              {metric.value}
+            </p>
           </CardContent>
         </Card>
       ))}

@@ -171,20 +171,25 @@ export function ReservationDetail({ reservationId }: { reservationId: string }) 
         ) : null}
       </div>
 
-      <div className="mt-6 flex flex-wrap gap-3">
-        <Button
-          disabled={!isPending || pendingAction !== null}
-          onClick={() => mutateReservation("confirm")}
-        >
-          {pendingAction === "confirm" ? "Confirming..." : "Confirm purchase"}
-        </Button>
-        <Button
-          variant="outline"
-          disabled={!isPending || pendingAction !== null}
-          onClick={() => mutateReservation("release")}
-        >
-          {pendingAction === "release" ? "Cancelling..." : "Cancel"}
-        </Button>
+      <div className="mt-6 flex flex-wrap items-center gap-3">
+        {isPending ? (
+          <>
+            <Button disabled={pendingAction !== null} onClick={() => mutateReservation("confirm")}>
+              {pendingAction === "confirm" ? "Confirming..." : "Confirm purchase"}
+            </Button>
+            <Button
+              variant="outline"
+              disabled={pendingAction !== null}
+              onClick={() => mutateReservation("release")}
+            >
+              {pendingAction === "release" ? "Cancelling..." : "Cancel"}
+            </Button>
+          </>
+        ) : (
+          <p className="rounded-md border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-medium text-slate-600">
+            This reservation is closed. No checkout action is needed.
+          </p>
+        )}
         <Link className="px-4 py-2 text-sm font-medium text-accent" href="/">
           Back to products
         </Link>
